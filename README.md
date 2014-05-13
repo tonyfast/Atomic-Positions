@@ -12,3 +12,37 @@ This repository contains both the input and output of Molecular Dynamics simulat
 * Initial atomic positions
 * LAMMPS input for model parameters
 * The positions of individual atoms in each simulation over time
+
+## Structure of Repository
+
+
+## Contents of mat files
+
+* ``data``
+* ``paircorr``
+    
+    * ``xx``
+    * ``I``
+
+* ``meta``
+    
+    * ``Step``
+    * ``Temp``
+    * ``Press``
+    * ``PotEng``
+    * ``KinEng``
+    * ``TotEng``
+    * ``Volume``
+    * ``Lx``
+    * ``Ly``
+    * ``Lz``
+    * ``Pxx``
+    * ``Pyy``
+    * ``Pzz``
+    * ``Pxy``
+    * ``Pxz``
+    * ``Pyz``
+
+
+### Variable Fields in meta
+
