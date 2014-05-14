@@ -62,7 +62,6 @@ if param.isplot
     xlabel('Distance')
     ylabel({'Probability of finding another Al atom','It still needs to be normalized'});
     title('Pair correlation function of the inter-spacing of Al atoms');
-    sprintf( '%s/assets/%s-pair-correlation.png', param.todir, output.name )
     saveas( gcf, sprintf( '%s/assets/%s-pair-correlation.png', param.todir, output.name ));
     output.image{2} = sprintf( '%s-pair-correlation.png', output.name );
 end

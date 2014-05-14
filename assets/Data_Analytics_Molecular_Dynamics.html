@@ -76,7 +76,7 @@ addpath(<span class="string">'./pca'</span>);
  <span class="comment">% Files in the data directry</span>
  ff = dir( data_dir );
  ct = 0;
- <span class="keyword">for</span> ii = []<span class="comment">%1 : numel( ff );</span>
+ <span class="keyword">for</span> ii = 1 : numel( ff );
 
      <span class="keyword">if</span> ~all( ff(ii).name == <span class="string">'.'</span> );
 </pre><pre class="codeinput">         ct = ct + 1;
@@ -87,6 +87,7 @@ addpath(<span class="string">'./pca'</span>);
              <span class="comment">% don't publish</span>
              output = Load2Matlab( sprintf(<span class="string">'%s%s%s'</span>, data_dir, filesep, ff(ii).name ),param );
          <span class="keyword">end</span>
+         close <span class="string">all</span>;
 </pre><h2>Material Feature Indentification<a name="8"></a></h2><p>The feature indentification process preps the materials information to be digested by data analytics.  The Data matrix (<i>feature</i> variable) is an <i>N x D</i> array where N indexes each datapoint and D indexes the features that each column represents.</p><p>In this application, each datapoint ( or row ) is identified by a Energy Potential Acronym (<i>output.tags{1}</i>) and the Step(<i>output.Step</i>) in the simulation that the datapoint was recorded for .  The set { <i>output.tags{1}</i>, <i>output.Step</i> } uniquely map to an index for each row.</p><p>The columns correspond to vectors in the spatial statistics.  The vector distance are exported by the CreateFeature function; <i>feature.columns</i> are the vector distances in the Pair Correlation that were extracted previously.</p><p><i>feature.cut</i> has a hyperparameter of the cutoff distance which can be modulated in the function <i>CreateFeature</i>.</p><pre class="codeinput">         feature(ct) = CreateFeature( output );
 </pre><pre class="codeinput">     <span class="keyword">end</span>
  <span class="keyword">end</span>
@@ -143,6 +144,7 @@ axis <span class="string">square</span>
 hold <span class="string">off</span>
 legend( hpca, plotclass );
 view(2);
+title( sprintf(<span class="string">'Cutoff is %i nm'</span>,feature(end).cut) )
 figure(gcf);
 </pre><img vspace="5" hspace="5" src="Data_Analytics_Molecular_Dynamics_01.png" alt=""> <h2>Cross-comparison of potentials<a name="17"></a></h2><p>A dendrogram of the centroids of each potential in PCA embedding.  The relative distnace of the potentials indicates a measure of similarity and dissimilarity between the models.</p><h2>Compute centroids<a name="18"></a></h2><pre class="codeinput">plotclass = setdiff({class{classindex}},ignoreclass);
 [~,reindex] = ismember( class(br), plotclass );
@@ -225,7 +227,7 @@ addpath('./pca');
  % Files in the data directry
  ff = dir( data_dir );
  ct = 0;
- for ii = []%1 : numel( ff );
+ for ii = 1 : numel( ff );
 
      if ~all( ff(ii).name == '.' );
          ct = ct + 1;
@@ -244,6 +246,7 @@ addpath('./pca');
              % don't publish
              output = Load2Matlab( sprintf('%s%s%s', data_dir, filesep, ff(ii).name ),param );
          end
+         close all;
 %% Material Feature Indentification
 % The feature indentification process preps the materials information to be
 % digested by data analytics.  The Data matrix (_feature_ variable) is an 
@@ -341,6 +344,7 @@ axis square
 hold off
 legend( hpca, plotclass );
 view(2);
+title( sprintf('Cutoff is %i nm',feature(end).cut) )
 figure(gcf);
 
 %% Cross-comparison of potentials

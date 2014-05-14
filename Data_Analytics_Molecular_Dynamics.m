@@ -46,7 +46,7 @@ addpath('./pca');
  % Files in the data directry
  ff = dir( data_dir );
  ct = 0;
- for ii = []%1 : numel( ff );
+ for ii = 1 : numel( ff );
 
      if ~all( ff(ii).name == '.' );
          ct = ct + 1;
@@ -65,6 +65,7 @@ addpath('./pca');
              % don't publish
              output = Load2Matlab( sprintf('%s%s%s', data_dir, filesep, ff(ii).name ),param );
          end
+         close all;
 %% Material Feature Indentification
 % The feature indentification process preps the materials information to be
 % digested by data analytics.  The Data matrix (_feature_ variable) is an 
@@ -162,6 +163,7 @@ axis square
 hold off
 legend( hpca, plotclass );
 view(2);
+title( sprintf('Cutoff is %i nm',feature(end).cut) )
 figure(gcf);
 
 %% Cross-comparison of potentials

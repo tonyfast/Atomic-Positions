@@ -1,0 +1,361 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PCA</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-05-14"><meta name="DC.source" content="PCA.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Generate the datapages for each of the datasets in the repository</a></li><li><a href="#2">Create Data Matrix</a></li><li><a href="#3">PCA Embedding calculation</a></li><li><a href="#6">Plot embedding with metadata tags</a></li></ul></div><h2>Generate the datapages for each of the datasets in the repository<a name="1"></a></h2><pre class="codeinput"><span class="comment">% Data directory</span>
+ data_dir = [<span class="string">'MAT'</span>];
+
+ ff = dir( data_dir );
+
+
+ <span class="comment">% parameters for converter</span>
+ param = struct(<span class="string">'isplot'</span>,false,<span class="string">'todir'</span>,<span class="string">'./assets'</span>);
+ ct = 0;
+ <span class="keyword">for</span> ii = []<span class="comment">%1 : numel( ff );</span>
+<span class="comment">%      if ~all( ff(ii).name == '.' );</span>
+<span class="comment">%          out = Load2Matlab( sprintf('%s%s%s', data_dir, filesep, ff(ii).name ) );</span>
+<span class="comment">%          matinpublish( out, 'title', out.name );</span>
+<span class="comment">%      end</span>
+     <span class="keyword">if</span> ~all( ff(ii).name == <span class="string">'.'</span> );
+         ct = ct + 1;
+         <span class="keyword">if</span> mod(ii-1,4) == 0
+             output = matinpublish( @Load2Matlab, sprintf(<span class="string">'%s%s%s'</span>, data_dir, filesep, ff(ii).name), <span class="string">'title'</span>, out.name );
+         <span class="keyword">else</span>
+             output = Load2Matlab( sprintf(<span class="string">'%s%s%s'</span>, data_dir, filesep, ff(ii).name ),param );
+         <span class="keyword">end</span>
+         <span class="comment">% Tag the feature vector with the necessary metadata</span>
+         feature(ct) = CreateFeature( output );
+     <span class="keyword">end</span>
+ <span class="keyword">end</span>
+</pre><h2>Create Data Matrix<a name="2"></a></h2><pre class="codeinput"> class = [ feature(:).label ];
+ [~, classindex] = unique( class );
+ step = [ feature(:).step ];
+ DM = zeros(numel( feature ), numel( feature(1).data ) );
+ <span class="keyword">for</span> ii = 1 : numel( feature )
+     DM( ii, : ) = feature(ii).data;
+ <span class="keyword">end</span>
+</pre><h2>PCA Embedding calculation<a name="3"></a></h2><p>Remove null columns</p><pre class="codeinput"> ignoreclass = {<span class="string">'ZJW04'</span>,<span class="string">'SBFT12'</span>,<span class="string">'MMP02'</span>}
+br = ~ismember( class, ignoreclass );
+</pre><pre class="codeoutput">
+ignoreclass = 
+
+    'ZJW04'    'SBFT12'    'MMP02'
+
+</pre><p>I had to add the row index because when the bias datasets are removed there are still nonzero columns.  This indicates that much of the separation is a result of entries in sparse feature columns.</p><pre class="codeinput">b = any( DM(br,:) ~= 0,1 );
+ DMBIAS = bsxfun( @rdivide, DM(br,b), sqrt( sum( DM(br,b).^2,1)));
+[ U S V ] = pca( DMBIAS );
+W =U*S;
+</pre><pre class="codeinput">plotclass = setdiff({class{classindex}},ignoreclass);
+[~,reindex] = ismember( class(br), plotclass );
+centroids = zeros( numel( plotclass), size( W,2) );
+<span class="keyword">for</span> ii = 1 : size(W,2)
+centroids(:,ii) = accumarray( reindex(:), W( :,ii),[],@mean)
+<span class="keyword">end</span>
+
+distance = pdist( centroids );
+z = linkage( distance );
+h = dendrogram(z);
+set( gca, <span class="string">'Xticklabel'</span>, [plotclass(str2num(get(gca,<span class="string">'Xticklabel'</span>)))] );
+view( [90 90]);
+set(h,<span class="string">'LineWidth'</span>,3,<span class="string">'Color'</span>,<span class="string">'k'</span>,<span class="string">'LineStyle'</span>,<span class="string">'--'</span>)
+grid <span class="string">on</span>;
+
+figure(gcf);
+</pre><pre class="codeoutput">
+centroids =
+
+   -0.3537         0         0         0         0         0
+   -0.3540         0         0         0         0         0
+   -0.3539         0         0         0         0         0
+   -0.3545         0         0         0         0         0
+   -0.3546         0         0         0         0         0
+   -0.3555         0         0         0         0         0
+   -0.3548         0         0         0         0         0
+   -0.3541         0         0         0         0         0
+   -0.3549         0         0         0         0         0
+   -0.3534         0         0         0         0         0
+   -0.3543         0         0         0         0         0
+   -0.3541         0         0         0         0         0
+   -0.3547         0         0         0         0         0
+
+
+centroids =
+
+   -0.3537    0.0213         0         0         0         0
+   -0.3540    0.0172         0         0         0         0
+   -0.3539    0.0182         0         0         0         0
+   -0.3545    0.0190         0         0         0         0
+   -0.3546   -0.0096         0         0         0         0
+   -0.3555   -0.0110         0         0         0         0
+   -0.3548   -0.0242         0         0         0         0
+   -0.3541    0.0146         0         0         0         0
+   -0.3549   -0.0120         0         0         0         0
+   -0.3534   -0.0146         0         0         0         0
+   -0.3543    0.0138         0         0         0         0
+   -0.3541   -0.0211         0         0         0         0
+   -0.3547   -0.0114         0         0         0         0
+
+
+centroids =
+
+   -0.3537    0.0213   -0.0016         0         0         0
+   -0.3540    0.0172    0.0028         0         0         0
+   -0.3539    0.0182    0.0039         0         0         0
+   -0.3545    0.0190    0.0037         0         0         0
+   -0.3546   -0.0096    0.0034         0         0         0
+   -0.3555   -0.0110   -0.0048         0         0         0
+   -0.3548   -0.0242   -0.0029         0         0         0
+   -0.3541    0.0146   -0.0049         0         0         0
+   -0.3549   -0.0120   -0.0043         0         0         0
+   -0.3534   -0.0146   -0.0001         0         0         0
+   -0.3543    0.0138   -0.0044         0         0         0
+   -0.3541   -0.0211    0.0054         0         0         0
+   -0.3547   -0.0114    0.0039         0         0         0
+
+
+centroids =
+
+   -0.3537    0.0213   -0.0016   -0.0003         0         0
+   -0.3540    0.0172    0.0028    0.0004         0         0
+   -0.3539    0.0182    0.0039   -0.0002         0         0
+   -0.3545    0.0190    0.0037   -0.0004         0         0
+   -0.3546   -0.0096    0.0034    0.0018         0         0
+   -0.3555   -0.0110   -0.0048   -0.0007         0         0
+   -0.3548   -0.0242   -0.0029    0.0003         0         0
+   -0.3541    0.0146   -0.0049   -0.0001         0         0
+   -0.3549   -0.0120   -0.0043   -0.0006         0         0
+   -0.3534   -0.0146   -0.0001    0.0005         0         0
+   -0.3543    0.0138   -0.0044    0.0004         0         0
+   -0.3541   -0.0211    0.0054   -0.0025         0         0
+   -0.3547   -0.0114    0.0039    0.0015         0         0
+
+
+centroids =
+
+   -0.3537    0.0213   -0.0016   -0.0003   -0.0007         0
+   -0.3540    0.0172    0.0028    0.0004   -0.0002         0
+   -0.3539    0.0182    0.0039   -0.0002   -0.0010         0
+   -0.3545    0.0190    0.0037   -0.0004   -0.0001         0
+   -0.3546   -0.0096    0.0034    0.0018    0.0019         0
+   -0.3555   -0.0110   -0.0048   -0.0007    0.0013         0
+   -0.3548   -0.0242   -0.0029    0.0003   -0.0017         0
+   -0.3541    0.0146   -0.0049   -0.0001    0.0001         0
+   -0.3549   -0.0120   -0.0043   -0.0006    0.0005         0
+   -0.3534   -0.0146   -0.0001    0.0005   -0.0018         0
+   -0.3543    0.0138   -0.0044    0.0004    0.0005         0
+   -0.3541   -0.0211    0.0054   -0.0025   -0.0009         0
+   -0.3547   -0.0114    0.0039    0.0015    0.0021         0
+
+
+centroids =
+
+   -0.3537    0.0213   -0.0016   -0.0003   -0.0007   -0.0015
+   -0.3540    0.0172    0.0028    0.0004   -0.0002    0.0004
+   -0.3539    0.0182    0.0039   -0.0002   -0.0010   -0.0002
+   -0.3545    0.0190    0.0037   -0.0004   -0.0001   -0.0005
+   -0.3546   -0.0096    0.0034    0.0018    0.0019    0.0001
+   -0.3555   -0.0110   -0.0048   -0.0007    0.0013    0.0003
+   -0.3548   -0.0242   -0.0029    0.0003   -0.0017   -0.0023
+   -0.3541    0.0146   -0.0049   -0.0001    0.0001    0.0004
+   -0.3549   -0.0120   -0.0043   -0.0006    0.0005    0.0007
+   -0.3534   -0.0146   -0.0001    0.0005   -0.0018    0.0016
+   -0.3543    0.0138   -0.0044    0.0004    0.0005    0.0009
+   -0.3541   -0.0211    0.0054   -0.0025   -0.0009   -0.0000
+   -0.3547   -0.0114    0.0039    0.0015    0.0021    0.0001
+
+</pre><img vspace="5" hspace="5" src="PCA_01.png" alt=""> <h2>Plot embedding with metadata tags<a name="6"></a></h2><pre class="codeinput">co = rand( numel( plotclass), 3 );
+<span class="keyword">for</span> ss = 1 : numel( plotclass )
+    b = reindex == ss;
+    h(ss) = plot3( W(b,1), W(b,2), W(b,3), <span class="string">'ko'</span>, <span class="keyword">...</span>
+        <span class="string">'Markersize'</span>, 16, <span class="string">'MarkerfaceColor'</span>,co(ss,:) );
+    <span class="keyword">if</span> ss == 1
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+text( centroids(:,1), centroids(:,2), centroids(:,3), plotclass );
+grid <span class="string">on</span>;
+axis <span class="string">square</span>
+hold <span class="string">off</span>
+legend( h, class(classindex) );
+figure(gcf)
+</pre><pre class="codeoutput">Warning: Ignoring extra legend entries. 
+</pre><img vspace="5" hspace="5" src="PCA_02.png" alt=""> <pre class="codeinput">examples = {<span class="string">'LEA_11'</span>,<span class="string">'WKG09_11'</span>};
+ct = 0;
+<span class="keyword">for</span> ii = examples
+    ct = ct + 1;
+    ex = Load2Matlab( fullfile( data_dir, sprintf( <span class="string">'%s.mat'</span>, ii{:} ) ),param );
+    subplot( 1,2,ct);
+    PlotMolecules( ex );
+    view([0 0 ]);
+<span class="keyword">end</span>
+figure(gcf)
+</pre><img vspace="5" hspace="5" src="PCA_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Generate the datapages for each of the datasets in the repository
+
+
+% Data directory
+ data_dir = ['MAT'];
+
+ ff = dir( data_dir );
+ 
+ 
+ % parameters for converter
+ param = struct('isplot',false,'todir','./assets');
+ ct = 0;
+ for ii = []%1 : numel( ff );
+%      if ~all( ff(ii).name == '.' );
+%          out = Load2Matlab( sprintf('%s%s%s', data_dir, filesep, ff(ii).name ) );
+%          matinpublish( out, 'title', out.name );
+%      end
+     if ~all( ff(ii).name == '.' );
+         ct = ct + 1;
+         if mod(ii-1,4) == 0
+             output = matinpublish( @Load2Matlab, sprintf('%s%s%s', data_dir, filesep, ff(ii).name), 'title', out.name );
+         else
+             output = Load2Matlab( sprintf('%s%s%s', data_dir, filesep, ff(ii).name ),param );
+         end
+         % Tag the feature vector with the necessary metadata
+         feature(ct) = CreateFeature( output );
+     end
+ end
+ 
+ %% Create Data Matrix
+ class = [ feature(:).label ];
+ [~, classindex] = unique( class );
+ step = [ feature(:).step ];
+ DM = zeros(numel( feature ), numel( feature(1).data ) );
+ for ii = 1 : numel( feature )
+     DM( ii, : ) = feature(ii).data;
+ end
+ 
+ %% PCA Embedding calculation 
+ % Remove null columns
+ 
+ 
+ ignoreclass = {'ZJW04','SBFT12','MMP02'}
+br = ~ismember( class, ignoreclass );
+
+%% 
+% I had to add the row index because when the bias datasets are removed
+% there are still nonzero columns.  This indicates that much of the
+% separation is a result of entries in sparse feature columns.
+
+b = any( DM(br,:) ~= 0,1 );
+ DMBIAS = bsxfun( @rdivide, DM(br,b), sqrt( sum( DM(br,b).^2,1)));
+[ U S V ] = pca( DMBIAS );
+W =U*S;
+
+%%
+
+plotclass = setdiff({class{classindex}},ignoreclass);
+[~,reindex] = ismember( class(br), plotclass );
+centroids = zeros( numel( plotclass), size( W,2) );
+for ii = 1 : size(W,2)
+centroids(:,ii) = accumarray( reindex(:), W( :,ii),[],@mean)
+end
+
+distance = pdist( centroids );
+z = linkage( distance );
+h = dendrogram(z);
+set( gca, 'Xticklabel', [plotclass(str2num(get(gca,'Xticklabel')))] );
+view( [90 90]);
+set(h,'LineWidth',3,'Color','k','LineStyle','REPLACE_WITH_DASH_DASH')
+grid on;
+
+figure(gcf);
+%% Plot embedding with metadata tags
+
+co = rand( numel( plotclass), 3 );
+for ss = 1 : numel( plotclass )
+    b = reindex == ss;
+    h(ss) = plot3( W(b,1), W(b,2), W(b,3), 'ko', ...
+        'Markersize', 16, 'MarkerfaceColor',co(ss,:) );
+    if ss == 1
+        hold on;
+    end
+end
+text( centroids(:,1), centroids(:,2), centroids(:,3), plotclass );
+grid on;
+axis square
+hold off
+legend( h, class(classindex) );
+figure(gcf)
+%%
+
+examples = {'LEA_11','WKG09_11'};
+ct = 0;
+for ii = examples
+    ct = ct + 1;
+    ex = Load2Matlab( fullfile( data_dir, sprintf( '%s.mat', ii{:} ) ),param );
+    subplot( 1,2,ct);
+    PlotMolecules( ex );
+    view([0 0 ]);
+end
+figure(gcf)
+
+##### SOURCE END #####
+--></body></html>
