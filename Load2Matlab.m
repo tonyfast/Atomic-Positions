@@ -38,7 +38,8 @@ output.stats_distance = paircorr.xx;
 
 fldnames = fieldnames( meta );
 for ii = 1 : numel( fldnames )
-    output = setfield( output, fldnames{ii}, getfield( meta, fldnames{ii} ) );
+    v = getfield( meta, fldnames{ii} );
+    output = setfield( output, fldnames{ii}, v(end) );
 end
 
 output.tag{1} = classname;

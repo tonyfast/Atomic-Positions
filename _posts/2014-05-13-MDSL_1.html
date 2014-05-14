@@ -1,0 +1,84 @@
+---
+layout: dataset
+title: MDSL_1
+var:
+  - KinEng
+  - Lx
+  - Ly
+  - Lz
+  - PotEng
+  - Press
+  - Pxx
+  - Pxy
+  - Pxz
+  - Pyy
+  - Pyz
+  - Pzz
+  - Step
+  - Temp
+  - TotEng
+  - Volume
+  - tag
+data: 
+- name: 
+  - MDSL_1 
+  image: 
+  - MDSL_1-positions.png 
+  - MDSL_1-pair-correlation.png 
+  driver: 
+  - Load2Matlab 
+  metadata:
+  - var: position
+    dims: 
+     - 4000
+     - 3
+    type: double
+  - var: stats_probability
+    dims: 
+     - 1
+     - 501
+    type: double
+  - var: stats_distance
+    dims: 
+     - 1
+     - 501
+    type: double
+  - var: Step
+    value: 1000000.000000
+  - var: Temp
+    value: 892.336790
+  - var: Press
+    value: 244.791310
+  - var: PotEng
+    value: -13006.655000
+  - var: KinEng
+    value: 461.258990
+  - var: TotEng
+    value: -12545.396000
+  - var: Volume
+    value: 71485.368000
+  - var: Lx
+    value: 41.567075
+  - var: Ly
+    value: 41.429726
+  - var: Lz
+    value: 41.510277
+  - var: Pxx
+    value: -343.378330
+  - var: Pyy
+    value: 310.888440
+  - var: Pzz
+    value: 766.863820
+  - var: Pxy
+    value: -346.655390
+  - var: Pxz
+    value: -727.155020
+  - var: Pyz
+    value: 717.580030
+  - var: tag
+    dims: 
+     - 1
+     - 1
+    type: cell
+
+---

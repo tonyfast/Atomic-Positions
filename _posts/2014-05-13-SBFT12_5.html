@@ -1,0 +1,84 @@
+---
+layout: dataset
+title: SBFT12_5
+var:
+  - KinEng
+  - Lx
+  - Ly
+  - Lz
+  - PotEng
+  - Press
+  - Pxx
+  - Pxy
+  - Pxz
+  - Pyy
+  - Pyz
+  - Pzz
+  - Step
+  - Temp
+  - TotEng
+  - Volume
+  - tag
+data: 
+- name: 
+  - SBFT12_5 
+  image: 
+  - SBFT12_5-positions.png 
+  - SBFT12_5-pair-correlation.png 
+  driver: 
+  - Load2Matlab 
+  metadata:
+  - var: position
+    dims: 
+     - 4000
+     - 3
+    type: double
+  - var: stats_probability
+    dims: 
+     - 1
+     - 501
+    type: double
+  - var: stats_distance
+    dims: 
+     - 1
+     - 501
+    type: double
+  - var: Step
+    value: 1040000.000000
+  - var: Temp
+    value: 904.617960
+  - var: Press
+    value: 247.364800
+  - var: PotEng
+    value: -14225.664000
+  - var: KinEng
+    value: 467.607270
+  - var: TotEng
+    value: -13758.057000
+  - var: Volume
+    value: 94456.278000
+  - var: Lx
+    value: 42.437188
+  - var: Ly
+    value: 55.662345
+  - var: Lz
+    value: 39.987360
+  - var: Pxx
+    value: 314.971960
+  - var: Pyy
+    value: 605.523130
+  - var: Pzz
+    value: -178.400700
+  - var: Pxy
+    value: 255.570810
+  - var: Pxz
+    value: 797.909790
+  - var: Pyz
+    value: 452.976800
+  - var: tag
+    dims: 
+     - 1
+     - 1
+    type: cell
+
+---

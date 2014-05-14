@@ -1,0 +1,84 @@
+---
+layout: dataset
+title: MKBA1_5
+var:
+  - KinEng
+  - Lx
+  - Ly
+  - Lz
+  - PotEng
+  - Press
+  - Pxx
+  - Pxy
+  - Pxz
+  - Pyy
+  - Pyz
+  - Pzz
+  - Step
+  - Temp
+  - TotEng
+  - Volume
+  - tag
+data: 
+- name: 
+  - MKBA1_5 
+  image: 
+  - MKBA1_5-positions.png 
+  - MKBA1_5-pair-correlation.png 
+  driver: 
+  - Load2Matlab 
+  metadata:
+  - var: position
+    dims: 
+     - 4000
+     - 3
+    type: double
+  - var: stats_probability
+    dims: 
+     - 1
+     - 501
+    type: double
+  - var: stats_distance
+    dims: 
+     - 1
+     - 501
+    type: double
+  - var: Step
+    value: 1040000.000000
+  - var: Temp
+    value: 878.952190
+  - var: Press
+    value: 239.612930
+  - var: PotEng
+    value: -13073.358000
+  - var: KinEng
+    value: 454.340340
+  - var: TotEng
+    value: -12619.017000
+  - var: Volume
+    value: 70688.819000
+  - var: Lx
+    value: 41.335983
+  - var: Ly
+    value: 41.334303
+  - var: Lz
+    value: 41.372508
+  - var: Pxx
+    value: 316.397820
+  - var: Pyy
+    value: 271.263830
+  - var: Pzz
+    value: 131.177150
+  - var: Pxy
+    value: 250.358400
+  - var: Pxz
+    value: 282.557040
+  - var: Pyz
+    value: -90.379629
+  - var: tag
+    dims: 
+     - 1
+     - 1
+    type: cell
+
+---
