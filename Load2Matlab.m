@@ -56,7 +56,7 @@ if param.isplot
     axis equal
     let = 'xyz';
     for ii = 1 : 3
-        eval( sprintf('%slim( [0, output.L%s] )', let(ii), let(ii)));
+        eval( sprintf('%slim( [0, output.L%s(end)] )', let(ii), let(ii)));
     end
     grid on;
     saveas( gcf, sprintf( '%s/assets/%s-positions.png', param.todir, output.name ))
