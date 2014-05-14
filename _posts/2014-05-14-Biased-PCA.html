@@ -1,0 +1,405 @@
+---
+layout: report
+title: Biased PCA
+
+---
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Principal Component Analysis of Spatial Statistics in Molecular Dynamics Simulations</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-05-14"><meta name="DC.source" content="Data_Analytics_Molecular_Dynamics.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+
+
+
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 0px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Principal Component Analysis of Spatial Statistics in Molecular Dynamics Simulations</h1><!--introduction--><p>This script uses spatial statistics calculations of molecular dyanmics simulations to Verify and Validate Molecular Potentials in the <a href="www.ctcms.nist.gov/potentials/Al.html">NIST potentials repo</a> .</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Workflow</a></li><li><a href="#2">Repo Functions used</a></li><li><a href="#3">Notes</a></li><li><a href="#4">Load Mark Tygert's Randomized PCA algorithm.</a></li><li><a href="#5">Generate the datapages for each of the datasets in the repository</a></li><li><a href="#8">Material Feature Indentification</a></li><li><a href="#10">Create Data Matrix</a></li><li><a href="#11">Pre-process data for analysis</a></li><li><a href="#13">Principal Component Analysis</a></li><li><a href="#14">Execute PCA</a></li><li><a href="#15">Principal Component Embedding</a></li><li><a href="#17">Cross-comparison of potentials</a></li><li><a href="#18">Compute centroids</a></li><li><a href="#19">Plot dendrogram</a></li><li><a href="#20">PCA split comparison</a></li></ul></div><h2>Workflow<a name="1"></a></h2><div><ol><li>Load shared data.</li></ol></div><h2>Repo Functions used<a name="2"></a></h2><div><ul><li><i>Load2Matlab</i> - Loads in the matlab data.  The structure fields are description in this codes documentation.</li><li><i>PlotMolecules</i> - Uses the structured output from <i>Load2Matlab</i> to plot the positions of the atoms.</li><li><i>CreateFeature</i> - Converts the spatial statistics vector in a feature vector to be used in the principal component analysis tool.</li><li><i>PCA</i> - A randomized PCA algorithm downloaded from <a href="https://www.github.com/ryotat">ryotat's Github repo</a> .  This function is downloaded automatically if it doesn't exist.</li></ul></div><h2>Notes<a name="3"></a></h2><div><ul><li>Currently, the spatial statistics are imported from old codes.  They will be shared soon, but the information is presentated as is.</li></ul></div><h2>Load Mark Tygert's Randomized PCA algorithm.<a name="4"></a></h2><p>Spatial statistics provide a large number of features that are limiting to most PCA codes.  I like this one and this script will download it.</p><pre class="codeinput"><span class="keyword">if</span> ~isdir( <span class="string">'./pca/'</span> )
+    mkdir(<span class="string">'./pca'</span>);
+    urlwrite(<span class="string">'https://raw.github.com/ryotat/dal/master/matlab/pca.m'</span>,<span class="string">'./pca/pca.m'</span>)
+<span class="keyword">end</span>
+addpath(<span class="string">'./pca'</span>);
+</pre><h2>Generate the datapages for each of the datasets in the repository<a name="5"></a></h2><p>Each dataset dataset contains raw simulation data, simulation parameters, and post-processed Spatial Statistics.  <i>Load2Mat</i> describes the output structures.</p><pre class="codeinput"><span class="comment">% Repo location of the Matlab Data files</span>
+ data_dir = [<span class="string">'MAT'</span>];
+
+ <span class="comment">% Files in the data directry</span>
+ ff = dir( data_dir );
+ ct = 0;
+ <span class="keyword">for</span> ii = []<span class="comment">%1 : numel( ff );</span>
+
+     <span class="keyword">if</span> ~all( ff(ii).name == <span class="string">'.'</span> );
+</pre><pre class="codeinput">         ct = ct + 1;
+</pre><p>Use <i>matinpublish</i> to read in the datasets and publish the data pages for a subset of datum.  When the webpages aren't generated the data is loaded in as normal.  Either way <i>output</i> is constructed in both approaches.</p><p>It is cool to note that there is very little change in syntax between the appraoches.</p><pre class="codeinput">         <span class="keyword">if</span> mod(ii-1,4) == 0
+             <span class="comment">% publish</span>
+             output = matinpublish( @Load2Matlab, sprintf(<span class="string">'%s%s%s'</span>, data_dir, filesep, ff(ii).name), <span class="string">'title'</span>, out.name );
+         <span class="keyword">else</span>
+             <span class="comment">% don't publish</span>
+             output = Load2Matlab( sprintf(<span class="string">'%s%s%s'</span>, data_dir, filesep, ff(ii).name ),param );
+         <span class="keyword">end</span>
+</pre><h2>Material Feature Indentification<a name="8"></a></h2><p>The feature indentification process preps the materials information to be digested by data analytics.  The Data matrix (<i>feature</i> variable) is an <i>N x D</i> array where N indexes each datapoint and D indexes the features that each column represents.</p><p>In this application, each datapoint ( or row ) is identified by a Energy Potential Acronym (<i>output.tags{1}</i>) and the Step(<i>output.Step</i>) in the simulation that the datapoint was recorded for .  The set { <i>output.tags{1}</i>, <i>output.Step</i> } uniquely map to an index for each row.</p><p>The columns correspond to vectors in the spatial statistics.  The vector distance are exported by the CreateFeature function; <i>feature.columns</i> are the vector distances in the Pair Correlation that were extracted previously.</p><p><i>feature.cut</i> has a hyperparameter of the cutoff distance which can be modulated in the function <i>CreateFeature</i>.</p><pre class="codeinput">         feature(ct) = CreateFeature( output );
+</pre><pre class="codeinput">     <span class="keyword">end</span>
+ <span class="keyword">end</span>
+</pre><h2>Create Data Matrix<a name="10"></a></h2><pre class="codeinput"> <span class="comment">% Transform labels to an array</span>
+ class = [ feature(:).label ];
+
+ <span class="comment">% Give integer identifiers to the classes</span>
+ [~, classindex] = unique( class );
+
+ <span class="comment">% Transform steps to an array</span>
+ step = [ feature(:).step ];
+
+ <span class="comment">% Initialize the NxD data Matrix</span>
+ DM = zeros(numel( feature ), numel( feature(1).data ) );
+
+ <span class="comment">% Add each row from the feature variable</span>
+ <span class="keyword">for</span> ii = 1 : numel( feature )
+     DM( ii, : ) = feature(ii).data;
+ <span class="keyword">end</span>
+</pre><h2>Pre-process data for analysis<a name="11"></a></h2><p>Remove bad features and selectively remove training data here. Remove classes from the analysis</p><pre class="codeinput">ignoreclass = {<span class="string">'ZJW04'</span>,<span class="string">'SBFT12'</span>,<span class="string">'MMP02'</span>}
+
+<span class="comment">% Remove null columns</span>
+br = ~ismember( class, ignoreclass );
+</pre><pre class="codeoutput">
+ignoreclass = 
+
+    'ZJW04'    'SBFT12'    'MMP02'
+
+</pre><p>I had to add the row index because when the bias datasets are removed there are still nonzero columns.  This indicates that much of the separation is a result of entries in sparse feature columns.</p><h2>Principal Component Analysis<a name="13"></a></h2><p>Principal Component Analysis is performed on the data matrix and the potentials included in the data matrix.  The Principal Component Analysis finds the linear combination feature columns that exhibit the largest covariance.</p><pre class="codeinput">b = any( DM(br,:) ~= 0,1 );
+<span class="comment">% Normalize the feature columns.</span>
+ DMBIAS = bsxfun( @rdivide, DM(br,b), sqrt( sum( DM(br,b).^2,1)));
+</pre><h2>Execute PCA<a name="14"></a></h2><pre class="codeinput">[ U S V ] = pca( DMBIAS );
+W =U*S;
+</pre><h2>Principal Component Embedding<a name="15"></a></h2><pre class="codeinput">co = rand( numel( plotclass), 3 );
+<span class="keyword">for</span> ss = 1 : numel( plotclass )
+    b = reindex == ss;
+</pre><p>Change line style to make it easier to visually intrepet the classes.</p><pre class="codeinput">    <span class="keyword">if</span> all( W(b,2) &gt; 0 )
+        ls = <span class="string">'k'</span>;
+    <span class="keyword">else</span>
+        ls = <span class="string">'w'</span>;
+    <span class="keyword">end</span>
+    <span class="comment">%</span>
+    hpca(ss) = plot3( W(b,1), W(b,2), W(b,3), [ls,<span class="string">'o'</span>], <span class="keyword">...</span>
+        <span class="string">'Markersize'</span>, 16, <span class="string">'MarkerfaceColor'</span>,co(ss,:));
+    <span class="keyword">if</span> ss == 1
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+xlabel(<span class="string">'PCA_1'</span>,<span class="string">'Fontsize'</span>,13);ylabel(<span class="string">'PCA_2'</span>,<span class="string">'Fontsize'</span>,13);zlabel(<span class="string">'PCA_3'</span>,<span class="string">'Fontsize'</span>,13);
+text( centroids(:,1), centroids(:,2), centroids(:,3), plotclass,<span class="string">'Fontsize'</span>,15 );
+grid <span class="string">on</span>;
+axis <span class="string">square</span>
+hold <span class="string">off</span>
+legend( hpca, plotclass );
+view(2);
+figure(gcf);
+</pre><img vspace="5" hspace="5" src="Data_Analytics_Molecular_Dynamics_01.png" alt=""> <h2>Cross-comparison of potentials<a name="17"></a></h2><p>A dendrogram of the centroids of each potential in PCA embedding.  The relative distnace of the potentials indicates a measure of similarity and dissimilarity between the models.</p><h2>Compute centroids<a name="18"></a></h2><pre class="codeinput">plotclass = setdiff({class{classindex}},ignoreclass);
+[~,reindex] = ismember( class(br), plotclass );
+centroids = zeros( numel( plotclass), size( W,2) );
+<span class="keyword">for</span> ii = 1 : size(W,2)
+    centroids(:,ii) = accumarray( reindex(:), W( :,ii),[],@mean);
+<span class="keyword">end</span>
+</pre><h2>Plot dendrogram<a name="19"></a></h2><pre class="codeinput">distance = pdist( centroids );
+z = linkage( distance );
+h = dendrogram(z);
+set( gca, <span class="string">'Xticklabel'</span>, [plotclass(str2num(get(gca,<span class="string">'Xticklabel'</span>)))] );
+view( [90 90]);
+set(h,<span class="string">'LineWidth'</span>,3,<span class="string">'Color'</span>,<span class="string">'k'</span>,<span class="string">'LineStyle'</span>,<span class="string">'--'</span>)
+grid <span class="string">on</span>;
+
+figure(gcf);
+</pre><img vspace="5" hspace="5" src="Data_Analytics_Molecular_Dynamics_02.png" alt=""> <h2>PCA split comparison<a name="20"></a></h2><p>In the initial data analytics there were outlying clusters in the PCA embedding.  In this pass, those classes have been removed.  The PCA embedding shows a clear clustering or separation of potentials.  The potential models are near the Aluminum melting temperature.  One can assume that the clusters in the PCA embedding correspond to a degree of melting or a degree of order.  This is still up for interpretation.</p><p>The following two pictures show a projection of the atomistic positions for example datasets  from each cluster.  The colors correspond to class colors in the PCA embedding.</p><pre class="codeinput">examples = {<span class="string">'LEA_11'</span>,<span class="string">'WKG09_11'</span>};
+ct = 0;
+<span class="comment">% Copy the plot features from the pca analysis.</span>
+copyplotclass = {<span class="string">'Color'</span>,<span class="string">'Markersize'</span>,<span class="string">'MarkerFaceColor'</span> };
+<span class="keyword">for</span> ii = examples
+    ct = ct + 1;
+    ex = Load2Matlab( fullfile( data_dir, sprintf( <span class="string">'%s.mat'</span>, ii{:} ) ),param );
+    [~,index] = ismember( ex.tags, plotclass );
+    subplot( 1,2,ct);
+
+    hmol = PlotMolecules( ex );
+    set( hmol, <span class="string">'MarkerFaceColor'</span>, co( index,:))
+    title( ex.tags{1} )
+    view([0 0 ]);
+<span class="keyword">end</span>
+figure(gcf)
+</pre><img vspace="5" hspace="5" src="Data_Analytics_Molecular_Dynamics_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Principal Component Analysis of Spatial Statistics in Molecular Dynamics Simulations
+% This script uses spatial statistics calculations of molecular dyanmics
+% simulations to Verify and Validate Molecular Potentials in the
+% <www.ctcms.nist.gov/potentials/Al.html NIST potentials repo>
+% .
+
+%%% Workflow
+%
+% # Load shared data.
+
+%%% Repo Functions used
+%
+% * _Load2Matlab_ - Loads in the matlab data.  The structure
+% fields are description in this codes documentation.
+% * _PlotMolecules_ - Uses the structured output from
+% _Load2Matlab_ to plot the positions of the atoms.
+% * _CreateFeature_ - Converts the spatial statistics vector in
+% a feature vector to be used in the principal component analysis tool.
+% * _PCA_ - A randomized PCA algorithm downloaded from
+% <https://www.github.com/ryotat ryotat's Github repo>
+% .  This function is
+% downloaded automatically if it doesn't exist.
+
+%%% Notes
+% * Currently, the spatial statistics are imported from old codes.  They
+% will be shared soon, but the information is presentated as is.
+
+%% Load Mark Tygert's Randomized PCA algorithm.
+% Spatial statistics provide a large number of features that are limiting
+% to most PCA codes.  I like this one and this script will download it.
+
+if ~isdir( './pca/' )
+    mkdir('./pca');
+    urlwrite('https://raw.github.com/ryotat/dal/master/matlab/pca.m','./pca/pca.m')
+end
+addpath('./pca');
+
+%% Generate the datapages for each of the datasets in the repository
+% Each dataset dataset contains raw simulation data, simulation parameters,
+% and post-processed Spatial Statistics.  _Load2Mat_ describes the output
+% structures.
+
+% Repo location of the Matlab Data files
+ data_dir = ['MAT'];
+
+ % Files in the data directry
+ ff = dir( data_dir );
+ ct = 0;
+ for ii = []%1 : numel( ff );
+
+     if ~all( ff(ii).name == '.' );
+         ct = ct + 1;
+         
+%%%
+% Use _matinpublish_ to read in the datasets and publish the data pages for a
+% subset of datum.  When the webpages aren't generated the data is loaded
+% in as normal.  Either way _output_ is constructed in both approaches.
+%
+% It is cool to note that there is very little change in syntax between the
+% appraoches.
+         if mod(ii-1,4) == 0
+             % publish
+             output = matinpublish( @Load2Matlab, sprintf('%s%s%s', data_dir, filesep, ff(ii).name), 'title', out.name );
+         else
+             % don't publish
+             output = Load2Matlab( sprintf('%s%s%s', data_dir, filesep, ff(ii).name ),param );
+         end
+%% Material Feature Indentification
+% The feature indentification process preps the materials information to be
+% digested by data analytics.  The Data matrix (_feature_ variable) is an 
+% _N x D_ array where N indexes each datapoint and D indexes the features
+% that each column represents.  
+%
+% In this application, each datapoint ( or row ) is identified by a Energy
+% Potential Acronym (_output.tags{1}_) and the Step(_output.Step_) in the simulation that
+% the datapoint was recorded for .  The set { _output.tags{1}_,
+% _output.Step_ } uniquely map to an index for each row.
+%
+% The columns correspond to vectors in the spatial statistics.  The vector
+% distance are exported by the CreateFeature function; _feature.columns_ are the vector distances in the Pair Correlation
+% that were extracted previously.  
+%
+% _feature.cut_ has a hyperparameter of the cutoff distance which can be
+% modulated in the function _CreateFeature_.
+         
+         feature(ct) = CreateFeature( output );
+     end
+ end
+ 
+ %% Create Data Matrix
+ 
+ % Transform labels to an array
+ class = [ feature(:).label ];
+ 
+ % Give integer identifiers to the classes
+ [~, classindex] = unique( class );
+ 
+ % Transform steps to an array
+ step = [ feature(:).step ];
+ 
+ % Initialize the NxD data Matrix
+ DM = zeros(numel( feature ), numel( feature(1).data ) );
+ 
+ % Add each row from the feature variable
+ for ii = 1 : numel( feature )
+     DM( ii, : ) = feature(ii).data;
+ end
+ 
+ %% Pre-process data for analysis
+ % Remove bad features and selectively remove training data here.
+% Remove classes from the analysis
+ignoreclass = {'ZJW04','SBFT12','MMP02'}
+
+% Remove null columns
+br = ~ismember( class, ignoreclass );
+
+%% 
+% I had to add the row index because when the bias datasets are removed
+% there are still nonzero columns.  This indicates that much of the
+% separation is a result of entries in sparse feature columns.
+
+%% Principal Component Analysis
+% Principal Component Analysis is performed on the data matrix and the
+% potentials included in the data matrix.  The Principal Component Analysis
+% finds the linear combination feature columns that exhibit the largest
+% covariance.
+
+b = any( DM(br,:) ~= 0,1 );
+% Normalize the feature columns.
+ DMBIAS = bsxfun( @rdivide, DM(br,b), sqrt( sum( DM(br,b).^2,1)));
+ 
+%%% Execute PCA
+[ U S V ] = pca( DMBIAS );
+W =U*S;
+
+
+%%% Principal Component Embedding
+
+co = rand( numel( plotclass), 3 );
+for ss = 1 : numel( plotclass )
+    b = reindex == ss;
+    %%% 
+    % Change line style to make it easier to visually intrepet the classes.
+    
+    if all( W(b,2) > 0 )
+        ls = 'k';
+    else
+        ls = 'w';
+    end
+    %
+    hpca(ss) = plot3( W(b,1), W(b,2), W(b,3), [ls,'o'], ...
+        'Markersize', 16, 'MarkerfaceColor',co(ss,:));
+    if ss == 1
+        hold on;
+    end
+end
+
+xlabel('PCA_1','Fontsize',13);ylabel('PCA_2','Fontsize',13);zlabel('PCA_3','Fontsize',13);
+text( centroids(:,1), centroids(:,2), centroids(:,3), plotclass,'Fontsize',15 );
+grid on;
+axis square
+hold off
+legend( hpca, plotclass );
+view(2);
+figure(gcf);
+
+%% Cross-comparison of potentials
+% A dendrogram of the centroids of each potential in PCA embedding.  The
+% relative distnace of the potentials indicates a measure of similarity and
+% dissimilarity between the models.
+
+
+%%% Compute centroids
+plotclass = setdiff({class{classindex}},ignoreclass);
+[~,reindex] = ismember( class(br), plotclass );
+centroids = zeros( numel( plotclass), size( W,2) );
+for ii = 1 : size(W,2)
+    centroids(:,ii) = accumarray( reindex(:), W( :,ii),[],@mean);
+end
+
+%%% Plot dendrogram
+distance = pdist( centroids );
+z = linkage( distance );
+h = dendrogram(z);
+set( gca, 'Xticklabel', [plotclass(str2num(get(gca,'Xticklabel')))] );
+view( [90 90]);
+set(h,'LineWidth',3,'Color','k','LineStyle','REPLACE_WITH_DASH_DASH')
+grid on;
+
+figure(gcf);
+%% PCA split comparison
+% In the initial data analytics there were outlying clusters in the PCA
+% embedding.  In this pass, those classes have been removed.  The PCA
+% embedding shows a clear clustering or separation of potentials.  The
+% potential models are near the Aluminum melting temperature.  One can
+% assume that the clusters in the PCA embedding correspond to a degree of
+% melting or a degree of order.  This is still up for interpretation.
+%
+% The following two pictures show a projection of the atomistic positions
+% for example datasets  from each cluster.  The colors correspond to class
+% colors in the PCA embedding.
+
+examples = {'LEA_11','WKG09_11'};
+ct = 0;
+% Copy the plot features from the pca analysis.
+copyplotclass = {'Color','Markersize','MarkerFaceColor' };
+for ii = examples
+    ct = ct + 1;
+    ex = Load2Matlab( fullfile( data_dir, sprintf( '%s.mat', ii{:} ) ),param );
+    [~,index] = ismember( ex.tags, plotclass );
+    subplot( 1,2,ct);
+    
+    hmol = PlotMolecules( ex );
+    set( hmol, 'MarkerFaceColor', co( index,:))
+    title( ex.tags{1} )
+    view([0 0 ]);
+end
+figure(gcf)
+
+##### SOURCE END #####
+--></body></html>
