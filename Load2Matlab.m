@@ -14,7 +14,7 @@ function output = Load2Matlab( mat_nm, param )
 % link
 % description
 % include
-% tag
+% tags
 % html
 
 load( mat_nm );
@@ -42,7 +42,7 @@ for ii = 1 : numel( fldnames )
     output = setfield( output, fldnames{ii}, v(end) );
 end
 
-output.tag{1} = classname;
+output.tags{1} = classname;
 
 %% Attach a plot of the spatial statistics
 
@@ -52,14 +52,7 @@ if param.isplot
     end
     
     % Plot the md positions;
-    plot3( output.position(:,1), output.position(:,2), output.position(:,3), ...
-        'ko','Markersize',10, 'MarkerFaceColor', rand( 1,3) );
-    axis equal
-    let = 'xyz';
-    for ii = 1 : 3
-        eval( sprintf('%slim( [0, output.L%s(end)] )', let(ii), let(ii)));
-    end
-    grid on;
+    PlotMolecules( output );
     saveas( gcf, sprintf( '%s/assets/%s-positions.png', param.todir, output.name ))
     output.image{1} = sprintf( '%s-positions.png', output.name );
     
