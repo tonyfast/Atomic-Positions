@@ -1,12 +1,26 @@
 %% Principal Component Analysis of Spatial Statistics in Molecular Dynamics Simulations
 % This script uses spatial statistics calculations of molecular dyanmics
 % simulations to Verify and Validate Molecular Potentials in the
-% <www.ctcms.nist.gov/potentials/Al.html NIST potentials repo>
-% .
+% <www.ctcms.nist.gov/potentials/Al.html NIST potentials repo> that is
+% overseen by 
+% <http://www.nist.gov/mml/msed/thermodynamics_kinetics/chandler_becker.cfm Chandler Becker>
+% who is a molecular dynamics guru in the Materials Measurement Lab.
 
 %%% Workflow
 %
-% # Load shared data.
+% # *Snag some externals codes* - Download Mark Tygert's randomized PCA
+% algorithm if you ain't got it yet.
+% # *Load shared data* - Dataset pages are being for some datasets while
+% the information is being loaded in.
+% # *Feature Indentification* - This step preps the shared data for use in
+% a data analytics scenario.
+% # *Preprocess Data Matrix* - Each row is a feature identifier in the data
+% matrix.  eg. normalize features, remove rows, remove columns.
+% # *Principal Component Analysis* - Apply principal components analysis to
+% the data matrix.  
+% # *Visualization* - Visualize the results. e.g. visualize embedding,
+% embedding statistics, other data fields.
+% # *Iterate* - Design a new experiment from what you have learned.
 
 %%% Repo Functions used
 %
@@ -58,28 +72,38 @@ addpath('./pca');
 %
 % It is cool to note that there is very little change in syntax between the
 % appraoches.
-         if mod(ii-1,4) == 0
+         if false;mod(ii-1,4) == 0
              % publish
              output = matinpublish( @Load2Matlab, sprintf('%s%s%s', data_dir, filesep, ff(ii).name), 'title', out.name );
          else
              % don't publish
+             param = struct( 'isplot',false,'todir','.');
              output = Load2Matlab( sprintf('%s%s%s', data_dir, filesep, ff(ii).name ),param );
          end
          close all;
 %% Material Feature Indentification
 % The feature indentification process preps the materials information to be
-% digested by data analytics.  The Data matrix (_feature_ variable) is an 
+% digested by data analytics.  The Data matrix <_feature_> is an 
 % _N x D_ array where N indexes each datapoint and D indexes the features
 % that each column represents.  
 %
 % In this application, each datapoint ( or row ) is identified by a Energy
-% Potential Acronym (_output.tags{1}_) and the Step(_output.Step_) in the simulation that
+% Potential Acronym <_output.tags{1}_> and the Step<_output.Step_> in the simulation that
 % the datapoint was recorded for .  The set { _output.tags{1}_,
-% _output.Step_ } uniquely map to an index for each row.
+% _output.Step_(end) } uniquely map to an index for each row.
 %
 % The columns correspond to vectors in the spatial statistics.  The vector
-% distance are exported by the CreateFeature function; _feature.columns_ are the vector distances in the Pair Correlation
-% that were extracted previously.  
+% distance are exported by the CreateFeature function; <_feature.columns_> are the vector distances in the Pair Correlation
+% that were extracted previously. 
+% 
+% Originally, the spatial statistics were sampled on a non-uniform grid.
+% <_CreateFeature_> interpolates the spatial statistics onto an even grid
+% up to a predefined cutoff length.  *This will be in a future report:* _The cutoff length inside the function
+% can be a hyper parameter in the statistics. _ 
+%
+% Please see the 
+% Create feature
+% report for more information.
 %
 % _feature.cut_ has a hyperparameter of the cutoff distance which can be
 % modulated in the function _CreateFeature_.
@@ -89,6 +113,14 @@ addpath('./pca');
  end
  
  %% Create Data Matrix
+ % The data matrix is an <_NxD_> matrix where each columns corresponds to
+ % fields the vector distances defined in <_feature.columns_>.  The rows
+ % are blocks of invidual atomic potential types and within each block are
+ % different timesteps from the simulation.
+ %
+ % Each row is a row vector of an N-D array of the interpolated spatial
+ % statistics onto an even grid.
+
  
  % Transform labels to an array
  class = [ feature(:).label ];
@@ -111,7 +143,8 @@ addpath('./pca');
  % Remove bad features and selectively remove training data here.
 % Remove classes from the analysis
 ignoreclass = {'ZJW04','SBFT12','MMP02'}
-
+plotclass = setdiff({class{classindex}},ignoreclass);
+[~,reindex] = ismember( class(br), plotclass );
 % Remove null columns
 br = ~ismember( class, ignoreclass );
 
@@ -134,6 +167,12 @@ b = any( DM(br,:) ~= 0,1 );
 [ U S V ] = pca( DMBIAS );
 W =U*S;
 
+%%% Compute centroids
+% They carry the relative distance between the potential clusters.
+centroids = zeros( numel( plotclass), size( W,2) );
+for ii = 1 : size(W,2)
+    centroids(:,ii) = accumarray( reindex(:), W( :,ii),[],@mean);
+end
 
 %%% Principal Component Embedding
 
@@ -170,15 +209,6 @@ figure(gcf);
 % A dendrogram of the centroids of each potential in PCA embedding.  The
 % relative distnace of the potentials indicates a measure of similarity and
 % dissimilarity between the models.
-
-
-%%% Compute centroids
-plotclass = setdiff({class{classindex}},ignoreclass);
-[~,reindex] = ismember( class(br), plotclass );
-centroids = zeros( numel( plotclass), size( W,2) );
-for ii = 1 : size(W,2)
-    centroids(:,ii) = accumarray( reindex(:), W( :,ii),[],@mean);
-end
 
 %%% Plot dendrogram
 distance = pdist( centroids );
